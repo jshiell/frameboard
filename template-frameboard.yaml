@@ -138,3 +138,22 @@
           {{ state_attr('sensor.home_weather_forecast_hourly', 'forecast')[3].temperature | round }}
         weather_timestamp_3: >
           {{ as_timestamp(state_attr('sensor.home_weather_forecast_hourly', 'forecast')[3].datetime) | timestamp_custom('%H') }}
+
+        collection_type: >
+          {% if strptime(states('sensor.template_rubbish_recycling_next'), '%d/%m/%Y') < strptime(states('sensor.template_rubbish_refuse_next'), '%d/%m/%Y') %}
+              Recycling
+          {% else %}
+              Rubbish
+          {% endif %}
+        collection_date: >
+          {% if strptime(states('sensor.template_rubbish_recycling_next'), '%d/%m/%Y') < strptime(states('sensor.template_rubbish_refuse_next'), '%d/%m/%Y') %}
+              {{ states('sensor.template_rubbish_recycling_next') }}
+          {% else %}
+              {{ states('sensor.template_rubbish_refuse_next') }}
+          {% endif %}
+        collection_day: >
+          {% if strptime(states('sensor.template_rubbish_recycling_next'), '%d/%m/%Y') < strptime(states('sensor.template_rubbish_refuse_next'), '%d/%m/%Y') %}
+              {{ as_timestamp(strptime(states('sensor.template_rubbish_recycling_next'), '%d/%m/%Y')) | timestamp_custom('%A') }}
+          {% else %}
+              {{ as_timestamp(strptime(states('sensor.template_rubbish_refuse_next'), '%d/%m/%Y')) | timestamp_custom('%A') }}
+          {% endif %}

@@ -112,7 +112,7 @@ font:
   - file: 'fonts/materialdesignicons-webfont.ttf'
     id: font_mdi_large
     size: 96
-    glyphs: &mdi-weather-glyphs
+    glyphs: &mdi-glyphs
       - "\U000F0590" # mdi-weather-cloudy
       - "\U000F0F2F" # mdi-weather-cloudy-alert
       - "\U000F0E6E" # mdi-weather-cloudy-arrow-right
@@ -143,10 +143,12 @@ font:
       - "\U000F0F38" # mdi-weather-tornado
       - "\U000F059D" # mdi-weather-windy
       - "\U000F059E" # mdi-weather-windy-variant
+      - "\U000F044C" # mdi-recycle
+      - "\U000F01C0" # mdi-delete
   - file: 'fonts/materialdesignicons-webfont.ttf'
     id: font_mdi_medium
     size: 36
-    glyphs: *mdi-weather-glyphs
+    glyphs: *mdi-glyphs
 
 binary_sensor:
   - platform: homeassistant
@@ -238,7 +240,6 @@ text_sensor:
     on_value:
       then:
         - lambda: 'id(data_updated) = true;'
-
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_timestamp_0
@@ -254,7 +255,6 @@ text_sensor:
     on_value:
       then:
         - lambda: 'id(data_updated) = true;'
-
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_timestamp_1
@@ -270,7 +270,6 @@ text_sensor:
     on_value:
       then:
         - lambda: 'id(data_updated) = true;'
-
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_timestamp_2
@@ -286,7 +285,6 @@ text_sensor:
     on_value:
       then:
         - lambda: 'id(data_updated) = true;'
-
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_timestamp_3
@@ -294,6 +292,35 @@ text_sensor:
     on_value:
       then:
         - lambda: 'id(data_updated) = true;'
+
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: collection_type
+    id: collection_type
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: collection_date
+    id: collection_date
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: collection_day
+    id: collection_day
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+
+color:
+  - id: color_text
+    red: 0%
+    green: 0%
+    blue: 0%
+    white: 100%
 
 spi:
   clk_pin: GPIO13
@@ -345,9 +372,14 @@ display:
           {"windy", "\U000F059D"},
           {"windy-variant", "\U000F059E"},
         };
+      std::map<std::string, std::string> collection_icon_map
+        {
+          {"Recycling", "\U000F044C"},
+          {"Rubbish", "\U000F01C0"},
+        };
 
       if (id(initial_data_received) == false) {
-        it.printf(240, 390, id(font_small_bold), color_text, TextAlign::TOP_CENTER, "WAITING FOR DATA...");
+        it.printf(240, 390, id(font_small_bold), color_text, TextAlign::TOP_CENTER, "WAITING FOR DATA");
 
       } else {
         it.printf(240, 84, id(font_title), color_text, TextAlign::TOP_CENTER, "WEATHER");
@@ -371,6 +403,10 @@ display:
         it.printf(375, 282, id(font_small_book), color_text, TextAlign::TOP_CENTER, "%s", id(weather_timestamp_3).state.c_str());
         it.printf(375, 306, id(font_mdi_medium), color_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_3).state.c_str()].c_str());
         it.printf(375, 354, id(font_small_bold), color_text, TextAlign::TOP_CENTER, "%2.0f°C", id(weather_temperature_3).state);
+
+        it.printf(120, 440, id(font_mdi_large), color_text, TextAlign::TOP_CENTER, "%s", collection_icon_map[id(collection_type).state.c_str()].c_str());
+        it.printf(120, 540, id(font_small_bold), color_text, TextAlign::TOP_CENTER, "%s", id(collection_day).state.c_str());
+        it.printf(120, 570, id(font_small_book), color_text, TextAlign::TOP_CENTER, "%s", id(collection_date).state.c_str());
 
         char str[17];
         time_t currTime = id(homeassistant_time).now().timestamp;

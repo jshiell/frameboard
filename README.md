@@ -11,3 +11,7 @@ In particular you need:
 * `home_weather_forecast_hourly` to contain the hourly forecase data. You need to call the `weather.get_forecasts` service to extract this from the Met.no integration.
 * `dashboard_refresh_status` to control whether we refresh the dashboard. In this case, I'm using motion sensors from UniFi cameras to control it. These don't have occupancy, hence the extra templates to allow us to detect motion during the past minute.
 * `frameboard_data` to contain all the information to push to the dashboad.
+
+## Waste Collections
+
+This relies on my [stalbansrubbishcollections](https://github.com/jshiell/homeassistant-stalbansrubbishcollections) plugin for Home Assistant.
