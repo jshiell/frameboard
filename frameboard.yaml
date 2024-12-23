@@ -99,7 +99,7 @@ font:
   - file: 'fonts/GothamRnd-Bold.ttf'
     id: font_title
     size: 54
-    glyphs: ['W', 'E', 'A', 'T', 'H', 'R', 'L', 'I', 'N', ' ']
+    glyphs: ['W', 'E', 'A', 'T', 'H', 'R', 'L', 'I', 'N', ' ', 'O', 'C']
   - file: 'fonts/GothamRnd-Bold.ttf'
     id: font_medium_bold
     size: 30
@@ -217,6 +217,14 @@ sensor:
       then:
         - lambda: 'id(data_updated) = true;'
 
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: trains_next_hour_count
+    id: trains_next_hour_count
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+
 text_sensor:
   - platform: homeassistant
     entity_id: weather.home
@@ -315,6 +323,14 @@ text_sensor:
       then:
         - lambda: 'id(data_updated) = true;'
 
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: trains_disruption
+    id: trains_disruption
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+
 color:
   - id: color_text
     red: 0%
@@ -404,9 +420,15 @@ display:
         it.printf(375, 306, id(font_mdi_medium), color_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_3).state.c_str()].c_str());
         it.printf(375, 354, id(font_small_bold), color_text, TextAlign::TOP_CENTER, "%2.0f°C", id(weather_temperature_3).state);
 
-        it.printf(120, 440, id(font_mdi_large), color_text, TextAlign::TOP_CENTER, "%s", collection_icon_map[id(collection_type).state.c_str()].c_str());
-        it.printf(120, 540, id(font_small_bold), color_text, TextAlign::TOP_CENTER, "%s", id(collection_day).state.c_str());
-        it.printf(120, 570, id(font_small_book), color_text, TextAlign::TOP_CENTER, "%s", id(collection_date).state.c_str());
+        it.printf(240, 406, id(font_title), color_text, TextAlign::TOP_CENTER, "LOCAL");
+
+        it.printf(120, 480, id(font_mdi_large), color_text, TextAlign::TOP_CENTER, "%s", collection_icon_map[id(collection_type).state.c_str()].c_str());
+        it.printf(120, 580, id(font_small_bold), color_text, TextAlign::TOP_CENTER, "%s", id(collection_day).state.c_str());
+        it.printf(120, 610, id(font_small_book), color_text, TextAlign::TOP_CENTER, "%s", id(collection_date).state.c_str());
+
+        it.printf(360, 480, id(font_large_bold), color_text, TextAlign::TOP_CENTER, "%1.0f", id(trains_next_hour_count).state);
+        it.printf(360, 580, id(font_small_book), color_text, TextAlign::TOP_CENTER, "Next Hour");
+        it.printf(360, 610, id(font_small_bold), color_text, TextAlign::TOP_CENTER, "%s", id(trains_disruption).state.c_str());
 
         char str[17];
         time_t currTime = id(homeassistant_time).now().timestamp;

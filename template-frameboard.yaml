@@ -157,3 +157,18 @@
           {% else %}
               {{ as_timestamp(strptime(states('sensor.template_rubbish_refuse_next'), '%d/%m/%Y')) | timestamp_custom('%A') }}
           {% endif %}
+
+        trains_disruption: >
+          {% if states('binary_sensor.template_train_perturbation_sac_stp') == 'on' %}
+              DISRUPTED
+          {% endif %}
+        trains_next_hour_count: >
+          {% set threshold_timestamp = as_timestamp(now()) + 3600 %}
+          {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') %}
+          {% set train_count = 0 %}
+          {% for train in trains %}
+              {% if as_timestamp(train.scheduled) < threshold_timestamp and train.expected != 'Cancelled' %}
+                  {% set train_count = train_count + 1 %}
+              {% endif %}
+          {% endfor %}
+          {{ train_count }}
