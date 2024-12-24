@@ -370,6 +370,7 @@ display:
           {"night", "\U000F0594"},
           {"night-partly-cloudy", "\U000F0F31"},
           {"partlycloudy", "\U000F0595"},
+          {"partly-cloudy", "\U000F0595"},
           {"partly-lightning", "\U000F0F32"},
           {"partly-rainy", "\U000F0F33"},
           {"partly-snowy", "\U000F0F34"},
