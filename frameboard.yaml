@@ -112,7 +112,7 @@ font:
   - file: 'fonts/materialdesignicons-webfont.ttf'
     id: font_mdi_large
     size: 96
-    glyphs: &mdi-glyphs
+    glyphs: &mdi-glyphs # codepoints: https://pictogrammers.com/library/mdi/
       - "\U000F0590" # mdi-weather-cloudy
       - "\U000F0F2F" # mdi-weather-cloudy-alert
       - "\U000F0E6E" # mdi-weather-cloudy-arrow-right
@@ -145,6 +145,7 @@ font:
       - "\U000F059E" # mdi-weather-windy-variant
       - "\U000F044C" # mdi-recycle
       - "\U000F01C0" # mdi-delete
+      - "\U000F073A" # mdi-cancel
   - file: 'fonts/materialdesignicons-webfont.ttf'
     id: font_mdi_medium
     size: 36
@@ -426,8 +427,13 @@ display:
         it.printf(120, 580, id(font_small_bold), color_text, TextAlign::TOP_CENTER, "%s", id(collection_day).state.c_str());
         it.printf(120, 610, id(font_small_book), color_text, TextAlign::TOP_CENTER, "%s", id(collection_date).state.c_str());
 
-        it.printf(360, 480, id(font_large_bold), color_text, TextAlign::TOP_CENTER, "%1.0f", id(trains_next_hour_count).state);
-        it.printf(360, 580, id(font_small_book), color_text, TextAlign::TOP_CENTER, "Next Hour");
+        if (id(trains_next_hour_count).state > 0) {
+          it.printf(360, 480, id(font_large_bold), color_text, TextAlign::TOP_CENTER, "%1.0f", id(trains_next_hour_count).state);
+          it.printf(360, 580, id(font_small_book), color_text, TextAlign::TOP_CENTER, "Next Hour");
+        } else {
+          it.printf(360, 480, id(font_mdi_large), color_text, TextAlign::TOP_CENTER, "\U000F073A");
+          it.printf(360, 580, id(font_small_book), color_text, TextAlign::TOP_CENTER, "No Trains");
+        }
         it.printf(360, 610, id(font_small_bold), color_text, TextAlign::TOP_CENTER, "%s", id(trains_disruption).state.c_str());
 
         char str[17];
@@ -437,4 +443,3 @@ display:
       }
 
 captive_portal:
-
