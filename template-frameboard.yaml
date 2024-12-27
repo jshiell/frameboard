@@ -139,6 +139,21 @@
         weather_timestamp_3: >
           {{ as_timestamp(state_attr('sensor.home_weather_forecast_hourly', 'forecast')[3].datetime) | timestamp_custom('%H') }}
 
+        weather_condition_4: >
+          {% set cond4 = state_attr('sensor.home_weather_forecast_hourly', 'forecast')[4].condition %}
+          {% set next_setting = as_timestamp(state_attr('sun.sun', 'next_setting')) %}
+          {% set next_rising = as_timestamp(state_attr('sun.sun', 'next_rising')) %}
+          {% set cond4_time = as_timestamp(state_attr('sensor.home_weather_forecast_hourly', 'forecast')[4].datetime) %}
+          {% if cond4_time < next_rising and next_rising < next_setting %}
+              {% if cond4 == 'sunny' %} night {% elif cond4 == 'partlycloudy' %} night-partly-cloudy {% else %} {{ cond4 }} {% endif %}
+          {% else %}
+              {{ cond4 }}
+          {% endif %}
+        weather_temperature_4: >
+          {{ state_attr('sensor.home_weather_forecast_hourly', 'forecast')[4].temperature | round }}
+        weather_timestamp_4: >
+          {{ as_timestamp(state_attr('sensor.home_weather_forecast_hourly', 'forecast')[4].datetime) | timestamp_custom('%H') }}
+
         collection_type: >
           {% if strptime(states('sensor.template_rubbish_recycling_next'), '%d/%m/%Y') < strptime(states('sensor.template_rubbish_refuse_next'), '%d/%m/%Y') %}
               Recycling
@@ -152,10 +167,22 @@
               {{ states('sensor.template_rubbish_refuse_next') }}
           {% endif %}
         collection_day: >
-          {% if strptime(states('sensor.template_rubbish_recycling_next'), '%d/%m/%Y') < strptime(states('sensor.template_rubbish_refuse_next'), '%d/%m/%Y') %}
-              {{ as_timestamp(strptime(states('sensor.template_rubbish_recycling_next'), '%d/%m/%Y')) | timestamp_custom('%A') }}
+          {% set today = today_at('00:00') %}
+          {% set tomorrow = today + timedelta(days=1) %}
+          {% set next_rubbish = strptime(states('sensor.template_rubbish_refuse_next'), '%d/%m/%Y').astimezone() %}
+          {% set next_recycling = strptime(states('sensor.template_rubbish_recycling_next'), '%d/%m/%Y').astimezone() %}
+          {% if next_rubbish < next_recycling %}
+              {% set next_collection_date = next_rubbish %}
           {% else %}
-              {{ as_timestamp(strptime(states('sensor.template_rubbish_refuse_next'), '%d/%m/%Y')) | timestamp_custom('%A') }}
+              {% set next_collection_date = next_recycling %}
+          {% endif %}
+
+          {% if next_collection_date >= today and next_collection_date  < tomorrow %}
+              Today
+          {% elif next_collection_date >= tomorrow and next_collection_date < tomorrow + timedelta(days=1) %}
+              Tomorrow
+          {% else %}
+              {{ next_collection_date | as_timestamp | timestamp_custom('%A') }}
           {% endif %}
 
         trains_disruption: >
