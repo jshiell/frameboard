@@ -144,7 +144,7 @@ font:
       - "\U000F059D" # mdi-weather-windy
       - "\U000F059E" # mdi-weather-windy-variant
       - "\U000F044C" # mdi-recycle
-      - "\U000F01C0" # mdi-delete
+      - "\U000F0A7A" # mdi-trash-can-outline
       - "\U000F073A" # mdi-cancel
   - file: 'fonts/materialdesignicons-webfont.ttf'
     id: font_mdi_medium
@@ -411,7 +411,7 @@ display:
       std::map<std::string, std::string> collection_icon_map
         {
           {"Recycling", "\U000F044C"},
-          {"Rubbish", "\U000F01C0"},
+          {"Rubbish", "\U000F0A7A"},
         };
 
       // 'white' prints as black on the e-ink display
