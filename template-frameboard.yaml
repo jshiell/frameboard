@@ -90,7 +90,7 @@
               {{ cond0 }}
           {% endif %}
         weather_temperature_0: >
-          {{ state_attr('sensor.home_weather_forecast_hourly', 'forecast')[0].temperature | round }}
+          {{ state_attr('sensor.home_weather_forecast_hourly', 'forecast')[0].temperature | round(1) }}
         weather_timestamp_0: >
           {{ as_timestamp(state_attr('sensor.home_weather_forecast_hourly', 'forecast')[0].datetime) | timestamp_custom('%H') | int }}
 
@@ -105,7 +105,7 @@
               {{ cond1 }}
           {% endif %}
         weather_temperature_1: >
-          {{ state_attr('sensor.home_weather_forecast_hourly', 'forecast')[1].temperature | round }}
+          {{ state_attr('sensor.home_weather_forecast_hourly', 'forecast')[1].temperature | round(1) }}
         weather_timestamp_1: >
           {{ as_timestamp(state_attr('sensor.home_weather_forecast_hourly', 'forecast')[1].datetime) | timestamp_custom('%H') | int }}
 
@@ -120,7 +120,7 @@
               {{ cond2 }}
           {% endif %}
         weather_temperature_2: >
-          {{ state_attr('sensor.home_weather_forecast_hourly', 'forecast')[2].temperature | round }}
+          {{ state_attr('sensor.home_weather_forecast_hourly', 'forecast')[2].temperature | round(1) }}
         weather_timestamp_2: >
           {{ as_timestamp(state_attr('sensor.home_weather_forecast_hourly', 'forecast')[2].datetime) | timestamp_custom('%H') | int }}
 
@@ -135,7 +135,7 @@
               {{ cond3 }}
           {% endif %}
         weather_temperature_3: >
-          {{ state_attr('sensor.home_weather_forecast_hourly', 'forecast')[3].temperature | round }}
+          {{ state_attr('sensor.home_weather_forecast_hourly', 'forecast')[3].temperature | round(1) }}
         weather_timestamp_3: >
           {{ as_timestamp(state_attr('sensor.home_weather_forecast_hourly', 'forecast')[3].datetime) | timestamp_custom('%H') }}
 
@@ -150,7 +150,7 @@
               {{ cond4 }}
           {% endif %}
         weather_temperature_4: >
-          {{ state_attr('sensor.home_weather_forecast_hourly', 'forecast')[4].temperature | round }}
+          {{ state_attr('sensor.home_weather_forecast_hourly', 'forecast')[4].temperature | round(1) }}
         weather_timestamp_4: >
           {{ as_timestamp(state_attr('sensor.home_weather_forecast_hourly', 'forecast')[4].datetime) | timestamp_custom('%H') }}
 
