@@ -109,24 +109,34 @@
           {% if wind_bearing >= 337.5 or wind_bearing < 22.5 %}
               North
           {% elif wind_bearing >= 22.5 and wind_bearing < 67.5 %}
-              North-east
+              Northeast
           {% elif wind_bearing >= 67.5 and wind_bearing < 112.5 %}
               East
           {% elif wind_bearing >= 112.5 and wind_bearing < 157.5 %}
-              South-east
+              Southeast
           {% elif wind_bearing >= 157.5 and wind_bearing < 202.5 %}
               South
           {% elif wind_bearing >= 202.5 and wind_bearing < 247.5 %}
-              South-west
+              Southwest
           {% elif wind_bearing >= 247.5 and wind_bearing < 292.5 %}
               West
           {% elif wind_bearing >= 292.5 and wind_bearing < 337.5 %}
-              North-west
+              Northwest
           {% endif %}
         weather_precipitation: >
           {{ state_attr('sensor.home_weather_forecast_daily', 'forecast')[0].precipitation | round(1) }}
-        weather_uv: >
-          {{ state_attr('sensor.home_weather_forecast_daily', 'forecast')[0].uv_index | round(1) }}
+        weather_uv_risk: >
+          {% if state_attr('sensor.home_weather_forecast_daily', 'forecast')[0].uv_index < 3 %}
+            Low
+          {% elif state_attr('sensor.home_weather_forecast_daily', 'forecast')[0].uv_index < 6 %}
+            Moderate
+          {% elif state_attr('sensor.home_weather_forecast_daily', 'forecast')[0].uv_index < 8 %}
+            High
+          {% elif state_attr('sensor.home_weather_forecast_daily', 'forecast')[0].uv_index < 11 %}
+            Very High
+          {% else %}
+            Extreme
+          {% endif %}
 
         weather_condition_0: >
           {% set cond0 = state_attr('sensor.home_weather_forecast_hourly', 'forecast')[0].condition %}

@@ -203,13 +203,6 @@ sensor:
     on_value:
       then:
         - lambda: 'id(data_updated) = true;'
-  - platform: homeassistant
-    entity_id: sensor.frameboard_data
-    attribute: weather_uv
-    id: weather_uv
-    on_value:
-      then:
-        - lambda: 'id(data_updated) = true;'
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -276,6 +269,13 @@ text_sensor:
     entity_id: sensor.frameboard_data
     attribute: weather_wind_bearing
     id: weather_wind_bearing
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: weather_uv_risk
+    id: weather_uv_risk
     on_value:
       then:
         - lambda: 'id(data_updated) = true;'
@@ -512,18 +512,18 @@ display:
 
         it.printf(140, 340, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F059C");
         it.printf(150, 350, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(weather_sunrise).state.c_str());
-        it.printf(330, 340, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F059B");
-        it.printf(340, 350, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(weather_sunset).state.c_str());
+        it.printf(320, 340, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F059B");
+        it.printf(330, 350, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(weather_sunset).state.c_str());
         
         it.printf(140, 380, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F059D");
         it.printf(150, 390, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%2.1f km/h", id(weather_wind_speed).state);
-        it.printf(330, 380, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F018C");
-        it.printf(340, 390, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(weather_wind_bearing).state.c_str());
+        it.printf(320, 380, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F018C");
+        it.printf(330, 390, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(weather_wind_bearing).state.c_str());
         
         it.printf(140, 420, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F0597");
         it.printf(150, 430, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%2.1f mm", id(weather_precipitation).state);
-        it.printf(330, 420, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F17FE");
-        it.printf(340, 430, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%2.1f", id(weather_uv).state);
+        it.printf(320, 420, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F17FE");
+        it.printf(330, 430, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(weather_uv_risk).state.c_str());
 
         it.printf(130, 500, id(font_mdi_large), colour_text, TextAlign::TOP_CENTER, "%s", collection_icon_map[id(collection_type).state.c_str()].c_str());
         it.printf(130, 600, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%s", id(collection_day).state.c_str());
