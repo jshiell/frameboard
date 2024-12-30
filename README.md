@@ -15,3 +15,9 @@ In particular you need:
 ## Waste Collections
 
 This relies on my [stalbansrubbishcollections](https://github.com/jshiell/homeassistant-stalbansrubbishcollections) plugin for Home Assistant.
+
+## Train Times
+
+This depends on @jfparis' [homeassistant_nationalrail](https://github.com/jfparis/homeassistant_nationalrail) plugin for Home Assistant.
+
+I'm tracking Thameslink (SAC -> STP), and splitting the trains into fast trains (<25m) & slow trains. I'm also filtering out trains outside of a reasonable walking time via the template, currently 18 minutes. Change as required.
