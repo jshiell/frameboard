@@ -550,7 +550,7 @@ display:
         char str[17];
         time_t currTime = id(homeassistant_time).now().timestamp;
         strftime(str, sizeof(str), "%H:%M", localtime(&currTime));
-        it.printf(240, 710, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "REFRESHED AT %s", str);
+        it.printf(240, 710, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "Last refreshed at %s", str);
       }
 
 captive_portal:
