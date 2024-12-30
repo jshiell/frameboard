@@ -189,13 +189,71 @@
           {% if states('binary_sensor.template_train_perturbation_sac_stp') == 'on' %}
               DISRUPTED
           {% endif %}
-        trains_next_hour_count: >
-          {% set threshold_timestamp = as_timestamp(now()) + 3600 %}
+        trains_next_fast_scheduled: >
+          {% set walking_time_mins = 18 %}
           {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') %}
-          {% set train_count = 0 %}
-          {% for train in trains %}
-              {% if as_timestamp(train.scheduled) < threshold_timestamp and train.expected != 'Cancelled' %}
-                  {% set train_count = train_count + 1 %}
+          {% set match = namespace(fast = None) %}
+          {% for train in trains if not train.expected == 'Cancelled'%}
+            {% set departure_time = as_timestamp(train.expected) %}
+            {% if departure_time > (as_timestamp(now()) + 18 * 60) %}
+              {% set arrival_time = as_timestamp(train.destinations[0].time_at_destination) %}
+              {% set travel_time = arrival_time - departure_time %}
+              {% if travel_time < (60 * 25) and match.fast == None %}
+                {% set match.fast = train %}
               {% endif %}
+            {% endif %}
           {% endfor %}
-          {{ train_count }}
+          {% if match.fast %}
+            {{ as_timestamp(match.fast.scheduled) | timestamp_custom('%H:%M') }}
+          {% endif %}
+        trains_next_fast_expected: >
+          {% set walking_time_mins = 18 %}
+          {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') %}
+          {% set match = namespace(fast = None) %}
+          {% for train in trains if not train.expected == 'Cancelled'%}
+            {% set departure_time = as_timestamp(train.expected) %}
+            {% if departure_time > (as_timestamp(now()) + 18 * 60) %}
+              {% set arrival_time = as_timestamp(train.destinations[0].time_at_destination) %}
+              {% set travel_time = arrival_time - departure_time %}
+              {% if travel_time < (60 * 25) and match.fast == None %}
+                {% set match.fast = train %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% if match.fast %}
+            {{ as_timestamp(match.fast.expected) | timestamp_custom('%H:%M') }}
+          {% endif %}
+        trains_next_slow_scheduled: >
+          {% set walking_time_mins = 18 %}
+          {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') %}
+          {% set match = namespace(slow = None) %}
+          {% for train in trains if not train.expected == 'Cancelled'%}
+            {% set departure_time = as_timestamp(train.expected) %}
+            {% if departure_time > (as_timestamp(now()) + 18 * 60) %}
+              {% set arrival_time = as_timestamp(train.destinations[0].time_at_destination) %}
+              {% set travel_time = arrival_time - departure_time %}
+              {% if travel_time >= (60 * 25) and match.slow == None %}
+                {% set match.slow = train %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% if match.slow %}
+            {{ as_timestamp(match.slow.scheduled) | timestamp_custom('%H:%M') }}
+          {% endif %}
+        trains_next_slow_expected: >
+          {% set walking_time_mins = 18 %}
+          {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') %}
+          {% set match = namespace(slow = None) %}
+          {% for train in trains if not train.expected == 'Cancelled'%}
+            {% set departure_time = as_timestamp(train.expected) %}
+            {% if departure_time > (as_timestamp(now()) + 18 * 60) %}
+              {% set arrival_time = as_timestamp(train.destinations[0].time_at_destination) %}
+              {% set travel_time = arrival_time - departure_time %}
+              {% if travel_time >= (60 * 25) and match.slow == None %}
+                {% set match.slow = train %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% if match.slow %}
+            {{ as_timestamp(match.slow.expected) | timestamp_custom('%H:%M') }}
+          {% endif %}

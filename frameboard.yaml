@@ -108,6 +108,10 @@ font:
     id: font_small_bold
     size: 18
     # glyphs: [' ', '-', '°', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', 'M', 'I', 'N']
+  - file: 'fonts/GothamRnd-Bold.ttf'
+    id: font_med_bold
+    size: 36
+    glyphs: [' ', ':', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
   - file: 'fonts/materialdesignicons-webfont.ttf'
     id: font_mdi_large
@@ -146,6 +150,8 @@ font:
       - "\U000F044C" # mdi-recycle
       - "\U000F0A7A" # mdi-trash-can-outline
       - "\U000F073A" # mdi-cancel
+      - "\U000F052C" # mdi-train
+      - "\U000F1677" # mdi-snail
   - file: 'fonts/materialdesignicons-webfont.ttf'
     id: font_mdi_medium
     size: 36
@@ -222,14 +228,6 @@ sensor:
     entity_id: sensor.frameboard_data
     attribute: weather_temperature_4
     id: weather_temperature_4
-    on_value:
-      then:
-        - lambda: 'id(data_updated) = true;'
-
-  - platform: homeassistant
-    entity_id: sensor.frameboard_data
-    attribute: trains_next_hour_count
-    id: trains_next_hour_count
     on_value:
       then:
         - lambda: 'id(data_updated) = true;'
@@ -354,6 +352,34 @@ text_sensor:
     on_value:
       then:
         - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: trains_next_fast_scheduled
+    id: trains_next_fast_scheduled
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: trains_next_fast_expected
+    id: trains_next_fast_expected
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: trains_next_slow_scheduled
+    id: trains_next_slow_scheduled
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: trains_next_slow_expected
+    id: trains_next_slow_expected
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
 
 spi:
   clk_pin: GPIO13
@@ -453,14 +479,23 @@ display:
         it.printf(120, 600, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%s", id(collection_day).state.c_str());
         it.printf(120, 630, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(collection_date).state.c_str());
 
-        if (id(trains_next_hour_count).state > 0) {
-          it.printf(360, 500, id(font_large_bold), colour_text, TextAlign::TOP_CENTER, "%1.0f", id(trains_next_hour_count).state);
-          it.printf(360, 600, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "Next Hour");
+        if (strlen(id(trains_next_fast_scheduled).state.c_str()) > 0 || strlen(id(trains_next_fast_scheduled).state.c_str()) > 0) {
+          it.printf(320, 500, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F052C");
+          it.printf(330, 500, id(font_med_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(trains_next_fast_expected).state.c_str());
+          if (id(trains_next_fast_expected).state != id(trains_next_fast_scheduled).state) {
+            it.printf(290, 540, id(font_small_book), colour_text, TextAlign::TOP_LEFT, "Scheduled %s", id(trains_next_fast_scheduled).state.c_str());
+          }
+          
+          it.printf(320, 570, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F1677");
+          it.printf(330, 570, id(font_med_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(trains_next_slow_expected).state.c_str());
+          if (id(trains_next_slow_expected).state != id(trains_next_slow_scheduled).state) {
+            it.printf(290, 610, id(font_small_book), colour_text, TextAlign::TOP_LEFT, "Scheduled %s", id(trains_next_slow_scheduled).state.c_str());
+          }
         } else {
           it.printf(360, 500, id(font_mdi_large), colour_text, TextAlign::TOP_CENTER, "\U000F073A");
           it.printf(360, 600, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "No Trains");
         }
-        it.printf(360, 630, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%s", id(trains_disruption).state.c_str());
+        it.printf(360, 640, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%s", id(trains_disruption).state.c_str());
 
         char str[17];
         time_t currTime = id(homeassistant_time).now().timestamp;
