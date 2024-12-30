@@ -97,10 +97,6 @@ font:
     size: 108
     glyphs: [' ', '-', '°', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
   - file: 'fonts/GothamRnd-Bold.ttf'
-    id: font_title
-    size: 54
-    glyphs: ['W', 'E', 'A', 'T', 'H', 'R', 'L', 'I', 'N', ' ', 'O', 'C']
-  - file: 'fonts/GothamRnd-Bold.ttf'
     id: font_medium_bold
     size: 30
     # glyphs: [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'M', 'I', 'N']
@@ -152,6 +148,8 @@ font:
       - "\U000F073A" # mdi-cancel
       - "\U000F052C" # mdi-train
       - "\U000F1677" # mdi-snail
+      - "\U000F018C" # mdi-compass-outline
+      - "\U000F17FE" # mdi-sun-wireless
   - file: 'fonts/materialdesignicons-webfont.ttf'
     id: font_mdi_medium
     size: 36
@@ -188,6 +186,27 @@ sensor:
     entity_id: weather.home
     attribute: temperature
     id: weather_temperature
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: weather_wind_speed
+    id: weather_wind_speed
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: weather_precipitation
+    id: weather_precipitation
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: weather_uv
+    id: weather_uv
     on_value:
       then:
         - lambda: 'id(data_updated) = true;'
@@ -236,6 +255,27 @@ text_sensor:
   - platform: homeassistant
     entity_id: weather.home
     id: weather_state
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: weather_sunrise
+    id: weather_sunrise
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: weather_sunset
+    id: weather_sunset
+    on_value:
+      then:
+        - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    entity_id: sensor.frameboard_data
+    attribute: weather_wind_bearing
+    id: weather_wind_bearing
     on_value:
       then:
         - lambda: 'id(data_updated) = true;'
@@ -447,55 +487,65 @@ display:
         it.printf(240, 390, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "WAITING FOR DATA");
 
       } else {
-        it.printf(240, 84, id(font_title), colour_text, TextAlign::TOP_CENTER, "WEATHER");
+        it.printf(190, 94, id(font_mdi_large), colour_text, TextAlign::TOP_RIGHT, "%s", weather_icon_map[id(weather_condition_now).state.c_str()].c_str());
+        it.printf(200, 94, id(font_large_bold), colour_text, TextAlign::TOP_LEFT, "%2.1f°", id(weather_temperature).state);
 
-        it.printf(100, 158, id(font_mdi_large), colour_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_now).state.c_str()].c_str());
+        it.printf(80, 218, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(weather_timestamp_0).state.c_str());
+        it.printf(80, 242, id(font_mdi_medium), colour_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_0).state.c_str()].c_str());
+        it.printf(80, 290, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%2.1f°", id(weather_temperature_0).state);
 
-        it.printf(320, 158, id(font_large_bold), colour_text, TextAlign::TOP_CENTER, "%2.1f°", id(weather_temperature).state);
+        it.printf(160, 218, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(weather_timestamp_1).state.c_str());
+        it.printf(160, 242, id(font_mdi_medium), colour_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_1).state.c_str()].c_str());
+        it.printf(160, 290, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%2.1f°", id(weather_temperature_1).state);
 
-        it.printf(80, 282, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(weather_timestamp_0).state.c_str());
-        it.printf(80, 306, id(font_mdi_medium), colour_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_0).state.c_str()].c_str());
-        it.printf(80, 354, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%2.1f°", id(weather_temperature_0).state);
+        it.printf(240, 218, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(weather_timestamp_2).state.c_str());
+        it.printf(240, 242, id(font_mdi_medium), colour_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_2).state.c_str()].c_str());
+        it.printf(240, 290, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%2.1f°", id(weather_temperature_2).state);
 
-        it.printf(160, 282, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(weather_timestamp_1).state.c_str());
-        it.printf(160, 306, id(font_mdi_medium), colour_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_1).state.c_str()].c_str());
-        it.printf(160, 354, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%2.1f°", id(weather_temperature_1).state);
+        it.printf(320, 218, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(weather_timestamp_3).state.c_str());
+        it.printf(320, 242, id(font_mdi_medium), colour_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_3).state.c_str()].c_str());
+        it.printf(320, 290, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%2.1f°", id(weather_temperature_3).state);
 
-        it.printf(240, 282, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(weather_timestamp_2).state.c_str());
-        it.printf(240, 306, id(font_mdi_medium), colour_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_2).state.c_str()].c_str());
-        it.printf(240, 354, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%2.1f°", id(weather_temperature_2).state);
+        it.printf(400, 218, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(weather_timestamp_4).state.c_str());
+        it.printf(400, 242, id(font_mdi_medium), colour_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_4).state.c_str()].c_str());
+        it.printf(400, 290, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%2.1f°", id(weather_temperature_4).state);
 
-        it.printf(320, 282, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(weather_timestamp_3).state.c_str());
-        it.printf(320, 306, id(font_mdi_medium), colour_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_3).state.c_str()].c_str());
-        it.printf(320, 354, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%2.1f°", id(weather_temperature_3).state);
+        it.printf(140, 340, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F059C");
+        it.printf(150, 350, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(weather_sunrise).state.c_str());
+        it.printf(330, 340, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F059B");
+        it.printf(340, 350, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(weather_sunset).state.c_str());
+        
+        it.printf(140, 380, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F059D");
+        it.printf(150, 390, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%2.1f km/h", id(weather_wind_speed).state);
+        it.printf(330, 380, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F018C");
+        it.printf(340, 390, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(weather_wind_bearing).state.c_str());
+        
+        it.printf(140, 420, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F0597");
+        it.printf(150, 430, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%2.1f mm", id(weather_precipitation).state);
+        it.printf(330, 420, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F17FE");
+        it.printf(340, 430, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%2.1f", id(weather_uv).state);
 
-        it.printf(400, 282, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(weather_timestamp_4).state.c_str());
-        it.printf(400, 306, id(font_mdi_medium), colour_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_4).state.c_str()].c_str());
-        it.printf(400, 354, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%2.1f°", id(weather_temperature_4).state);
-
-        it.printf(240, 426, id(font_title), colour_text, TextAlign::TOP_CENTER, "LOCAL");
-
-        it.printf(120, 500, id(font_mdi_large), colour_text, TextAlign::TOP_CENTER, "%s", collection_icon_map[id(collection_type).state.c_str()].c_str());
-        it.printf(120, 600, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%s", id(collection_day).state.c_str());
-        it.printf(120, 630, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(collection_date).state.c_str());
+        it.printf(130, 500, id(font_mdi_large), colour_text, TextAlign::TOP_CENTER, "%s", collection_icon_map[id(collection_type).state.c_str()].c_str());
+        it.printf(130, 600, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%s", id(collection_day).state.c_str());
+        it.printf(130, 630, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(collection_date).state.c_str());
 
         if (strlen(id(trains_next_fast_scheduled).state.c_str()) > 0 || strlen(id(trains_next_fast_scheduled).state.c_str()) > 0) {
-          it.printf(320, 500, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F052C");
-          it.printf(330, 500, id(font_med_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(trains_next_fast_expected).state.c_str());
+          it.printf(310, 500, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F052C");
+          it.printf(320, 500, id(font_med_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(trains_next_fast_expected).state.c_str());
           if (id(trains_next_fast_expected).state != id(trains_next_fast_scheduled).state) {
-            it.printf(290, 540, id(font_small_book), colour_text, TextAlign::TOP_LEFT, "Scheduled %s", id(trains_next_fast_scheduled).state.c_str());
+            it.printf(280, 540, id(font_small_book), colour_text, TextAlign::TOP_LEFT, "Scheduled %s", id(trains_next_fast_scheduled).state.c_str());
           }
           
-          it.printf(320, 570, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F1677");
-          it.printf(330, 570, id(font_med_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(trains_next_slow_expected).state.c_str());
+          it.printf(310, 570, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F1677");
+          it.printf(320, 570, id(font_med_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(trains_next_slow_expected).state.c_str());
           if (id(trains_next_slow_expected).state != id(trains_next_slow_scheduled).state) {
-            it.printf(290, 610, id(font_small_book), colour_text, TextAlign::TOP_LEFT, "Scheduled %s", id(trains_next_slow_scheduled).state.c_str());
+            it.printf(280, 610, id(font_small_book), colour_text, TextAlign::TOP_LEFT, "Scheduled %s", id(trains_next_slow_scheduled).state.c_str());
           }
         } else {
-          it.printf(360, 500, id(font_mdi_large), colour_text, TextAlign::TOP_CENTER, "\U000F073A");
-          it.printf(360, 600, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "No Trains");
+          it.printf(350, 500, id(font_mdi_large), colour_text, TextAlign::TOP_CENTER, "\U000F073A");
+          it.printf(350, 600, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "No Trains");
         }
-        it.printf(360, 640, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%s", id(trains_disruption).state.c_str());
+        it.printf(350, 640, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%s", id(trains_disruption).state.c_str());
 
         char str[17];
         time_t currTime = id(homeassistant_time).now().timestamp;

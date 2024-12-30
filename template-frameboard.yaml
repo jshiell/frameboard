@@ -1,6 +1,6 @@
 # import into Home Assistant's template configuration
 
-# get data for hourly weather forecast, using default Met.no integration
+# get data for hourly/daily weather forecast, using default Met.no integration
 - trigger:
     - platform: state
       entity_id: weather.home
@@ -21,6 +21,26 @@
       state: "{{ now() }}"
       attributes:
         forecast: "{{ hourly['weather.home'].forecast }}"
+- trigger:
+    - platform: state
+      entity_id: weather.home
+    - platform: time_pattern
+      hours: "/12"
+    - platform: homeassistant
+      event: start
+  action:
+    - service: weather.get_forecasts
+      data:
+        type: daily
+      target:
+        entity_id: weather.home
+      response_variable: daily
+  sensor:
+    - name: Home Weather Forecast Daily
+      unique_id: home_weather_forecast_daily
+      state: "{{ now() }}"
+      attributes:
+        forecast: "{{ daily['weather.home'].forecast }}"
 
 # Add occupancy timeouts to my UniFi motion sensors, which don't have them
 - trigger:
@@ -78,6 +98,35 @@
           {% else %}
               {{ cond_now }}
           {% endif %}
+        weather_sunrise: >
+          {{ as_timestamp(state_attr('sun.sun', 'next_rising')) | timestamp_custom('%H:%M') }}
+        weather_sunset: >
+          {{ as_timestamp(state_attr('sun.sun', 'next_setting')) | timestamp_custom('%H:%M') }}
+        weather_wind_speed: >
+          {{ state_attr('sensor.home_weather_forecast_daily', 'forecast')[0].wind_speed | round(1) }}
+        weather_wind_bearing: >
+          {% set wind_bearing = state_attr('sensor.home_weather_forecast_daily', 'forecast')[0].wind_bearing %}
+          {% if wind_bearing >= 337.5 or wind_bearing < 22.5 %}
+              North
+          {% elif wind_bearing >= 22.5 and wind_bearing < 67.5 %}
+              North-east
+          {% elif wind_bearing >= 67.5 and wind_bearing < 112.5 %}
+              East
+          {% elif wind_bearing >= 112.5 and wind_bearing < 157.5 %}
+              South-east
+          {% elif wind_bearing >= 157.5 and wind_bearing < 202.5 %}
+              South
+          {% elif wind_bearing >= 202.5 and wind_bearing < 247.5 %}
+              South-west
+          {% elif wind_bearing >= 247.5 and wind_bearing < 292.5 %}
+              West
+          {% elif wind_bearing >= 292.5 and wind_bearing < 337.5 %}
+              North-west
+          {% endif %}
+        weather_precipitation: >
+          {{ state_attr('sensor.home_weather_forecast_daily', 'forecast')[0].precipitation | round(1) }}
+        weather_uv: >
+          {{ state_attr('sensor.home_weather_forecast_daily', 'forecast')[0].uv_index | round(1) }}
 
         weather_condition_0: >
           {% set cond0 = state_attr('sensor.home_weather_forecast_hourly', 'forecast')[0].condition %}
