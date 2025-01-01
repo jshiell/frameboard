@@ -1,16 +1,16 @@
 esphome:
   name: "frameboard"
   on_boot:
-      priority: 200.0
-      then:
-        - component.update: eink_display
-        - wait_until:
-            condition:
-              lambda: 'return id(data_updated) == true;'
-        - delay: 5s
-        - logger.log: "Initial data received: refreshing display..."
-        - lambda: 'id(initial_data_received) = true;'
-        - script.execute: update_screen
+    priority: 200.0
+    then:
+      - component.update: eink_display
+      - wait_until:
+          condition:
+            lambda: "return id(data_updated) == true;"
+      - delay: 5s
+      - logger.log: "Initial data received: refreshing display..."
+      - lambda: "id(initial_data_received) = true;"
+      - script.execute: update_screen
 
 esp32:
   board: esp32dev
@@ -39,23 +39,23 @@ globals:
   - id: data_updated
     type: bool
     restore_value: no
-    initial_value: 'false'
+    initial_value: "false"
   - id: initial_data_received
     type: bool
     restore_value: no
-    initial_value: 'false'
+    initial_value: "false"
   - id: recorded_display_refresh
     type: int
     restore_value: yes
-    initial_value: '0'
+    initial_value: "0"
 
 script:
   - id: update_screen
     then:
-      - lambda: 'id(data_updated) = false;'
+      - lambda: "id(data_updated) = false;"
       - component.update: eink_display
-      - lambda: 'id(recorded_display_refresh) += 1;'
-      - lambda: 'id(display_last_update).publish_state(id(homeassistant_time).now().timestamp);'
+      - lambda: "id(recorded_display_refresh) += 1;"
+      - lambda: "id(display_last_update).publish_state(id(homeassistant_time).now().timestamp);"
 
 time:
   - platform: homeassistant
@@ -66,7 +66,7 @@ time:
         then:
           - if:
               condition:
-                lambda: 'return id(data_updated) == true;'
+                lambda: "return id(data_updated) == true;"
               then:
                 - if:
                     condition:
@@ -89,27 +89,28 @@ wifi:
     password: !secret frameboard_ap_password
 
 font:
-  - file: 'fonts/GothamRnd-Book.ttf'
+  - file: "fonts/GothamRnd-Book.ttf"
     id: font_small_book
     size: 18
-  - file: 'fonts/GothamRnd-Bold.ttf'
+  - file: "fonts/GothamRnd-Bold.ttf"
     id: font_large_bold
     size: 108
-    glyphs: [' ', '-', '°', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
-  - file: 'fonts/GothamRnd-Bold.ttf'
+    glyphs:
+      [" ", "-", "°", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."]
+  - file: "fonts/GothamRnd-Bold.ttf"
     id: font_medium_bold
     size: 30
     # glyphs: [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'M', 'I', 'N']
-  - file: 'fonts/GothamRnd-Bold.ttf'
+  - file: "fonts/GothamRnd-Bold.ttf"
     id: font_small_bold
     size: 18
     # glyphs: [' ', '-', '°', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', 'M', 'I', 'N']
-  - file: 'fonts/GothamRnd-Bold.ttf'
+  - file: "fonts/GothamRnd-Bold.ttf"
     id: font_med_bold
     size: 36
-    glyphs: [' ', ':', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    glyphs: [" ", ":", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
-  - file: 'fonts/materialdesignicons-webfont.ttf'
+  - file: "fonts/materialdesignicons-webfont.ttf"
     id: font_mdi_large
     size: 96
     glyphs: &mdi-glyphs # codepoints: https://pictogrammers.com/library/mdi/
@@ -150,7 +151,7 @@ font:
       - "\U000F1677" # mdi-snail
       - "\U000F018C" # mdi-compass-outline
       - "\U000F17FE" # mdi-sun-wireless
-  - file: 'fonts/materialdesignicons-webfont.ttf'
+  - file: "fonts/materialdesignicons-webfont.ttf"
     id: font_mdi_medium
     size: 36
     glyphs: *mdi-glyphs
@@ -166,15 +167,15 @@ sensor:
     device_class: timestamp
     entity_category: "diagnostic"
     id: display_last_update
-    
+
   - platform: template
     name: "Recorded Display Refresh"
     accuracy_decimals: 0
     unit_of_measurement: "Refreshes"
     state_class: "total_increasing"
     entity_category: "diagnostic"
-    lambda: 'return id(recorded_display_refresh);'
-  
+    lambda: "return id(recorded_display_refresh);"
+
   - platform: wifi_signal
     name: "WiFi Signal Strength"
     id: wifisignal
@@ -188,21 +189,21 @@ sensor:
     id: weather_temperature
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_wind_speed
     id: weather_wind_speed
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_precipitation
     id: weather_precipitation
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -210,7 +211,7 @@ sensor:
     id: weather_temperature_0
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -218,7 +219,7 @@ sensor:
     id: weather_temperature_1
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -226,7 +227,7 @@ sensor:
     id: weather_temperature_2
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -234,7 +235,7 @@ sensor:
     id: weather_temperature_3
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -242,7 +243,7 @@ sensor:
     id: weather_temperature_4
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
 text_sensor:
   - platform: homeassistant
@@ -250,35 +251,35 @@ text_sensor:
     id: weather_state
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_sunrise
     id: weather_sunrise
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_sunset
     id: weather_sunset
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_wind_bearing
     id: weather_wind_bearing
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_uv_risk
     id: weather_uv_risk
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -286,7 +287,7 @@ text_sensor:
     id: weather_condition_now
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -294,14 +295,14 @@ text_sensor:
     id: weather_condition_0
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_timestamp_0
     id: weather_timestamp_0
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -309,14 +310,14 @@ text_sensor:
     id: weather_condition_1
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_timestamp_1
     id: weather_timestamp_1
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -324,14 +325,14 @@ text_sensor:
     id: weather_condition_2
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_timestamp_2
     id: weather_timestamp_2
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -339,14 +340,14 @@ text_sensor:
     id: weather_condition_3
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_timestamp_3
     id: weather_timestamp_3
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -354,14 +355,14 @@ text_sensor:
     id: weather_condition_4
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: weather_timestamp_4
     id: weather_timestamp_4
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -369,21 +370,21 @@ text_sensor:
     id: collection_type
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: collection_date
     id: collection_date
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: collection_day
     id: collection_day
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
   - platform: homeassistant
     entity_id: sensor.frameboard_data
@@ -391,35 +392,35 @@ text_sensor:
     id: trains_disruption
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: trains_next_fast_scheduled
     id: trains_next_fast_scheduled
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: trains_next_fast_expected
     id: trains_next_fast_expected
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: trains_next_slow_scheduled
     id: trains_next_slow_scheduled
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
   - platform: homeassistant
     entity_id: sensor.frameboard_data
     attribute: trains_next_slow_expected
     id: trains_next_slow_expected
     on_value:
       then:
-        - lambda: 'id(data_updated) = true;'
+        - lambda: "id(data_updated) = true;"
 
 spi:
   clk_pin: GPIO13
@@ -487,8 +488,12 @@ display:
         it.printf(240, 390, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "WAITING FOR DATA");
 
       } else {
-        it.printf(190, 94, id(font_mdi_large), colour_text, TextAlign::TOP_RIGHT, "%s", weather_icon_map[id(weather_condition_now).state.c_str()].c_str());
-        it.printf(200, 94, id(font_large_bold), colour_text, TextAlign::TOP_LEFT, "%2.1f°", id(weather_temperature).state);
+        auto header_position = 190;
+        if (id(weather_temperature).state >= 10) {
+          header_position = 160;
+        }
+        it.printf(header_position, 94, id(font_mdi_large), colour_text, TextAlign::TOP_RIGHT, "%s", weather_icon_map[id(weather_condition_now).state.c_str()].c_str());
+        it.printf(header_position + 10, 94, id(font_large_bold), colour_text, TextAlign::TOP_LEFT, "%2.1f°", id(weather_temperature).state);
 
         it.printf(80, 218, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(weather_timestamp_0).state.c_str());
         it.printf(80, 242, id(font_mdi_medium), colour_text, TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_condition_0).state.c_str()].c_str());
@@ -514,12 +519,12 @@ display:
         it.printf(150, 350, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(weather_sunrise).state.c_str());
         it.printf(320, 340, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F059B");
         it.printf(330, 350, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(weather_sunset).state.c_str());
-        
+
         it.printf(140, 380, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F059D");
         it.printf(150, 390, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%2.1f km/h", id(weather_wind_speed).state);
         it.printf(320, 380, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F018C");
         it.printf(330, 390, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(weather_wind_bearing).state.c_str());
-        
+
         it.printf(140, 420, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F0597");
         it.printf(150, 430, id(font_small_bold), colour_text, TextAlign::TOP_LEFT, "%2.1f mm", id(weather_precipitation).state);
         it.printf(320, 420, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F17FE");
@@ -535,7 +540,7 @@ display:
           if (id(trains_next_fast_expected).state != id(trains_next_fast_scheduled).state) {
             it.printf(280, 540, id(font_small_book), colour_text, TextAlign::TOP_LEFT, "Scheduled %s", id(trains_next_fast_scheduled).state.c_str());
           }
-          
+
           it.printf(310, 570, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F1677");
           it.printf(320, 570, id(font_med_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(trains_next_slow_expected).state.c_str());
           if (id(trains_next_slow_expected).state != id(trains_next_slow_scheduled).state) {
