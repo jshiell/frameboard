@@ -2,9 +2,11 @@
 
 This is a fork of @Madelena's [Weatherman Dashboard](https://github.com/Madelena/esphome-weatherman-dashboard), adapted to make a little more sense for St Albans. All credit goes to her and her contributors for the meat of this, along with the idea.
 
+![A photograph of the completed dashboard sitting on a table](frameboard.jpeg)
+
 ## Sensors
 
-You'll need to add the sensors in `template-frameboard.yaml` to your Home Assistant configuration (I keep templates in `templates/` and import using `template: !include_dir_merge_list templates/`). 
+You'll need to add the sensors in `template-frameboard.yaml` to your Home Assistant configuration (I keep templates in `templates/` and import using `template: !include_dir_merge_list templates/`).
 
 In particular you need:
 
