@@ -108,7 +108,25 @@ font:
   - file: "fonts/GothamRnd-Bold.ttf"
     id: font_med_bold
     size: 36
-    glyphs: [" ", ":", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+    glyphs:
+      [
+        " ",
+        ":",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "N",
+        "o",
+        "n",
+        "e",
+      ]
 
   - file: "fonts/materialdesignicons-webfont.ttf"
     id: font_mdi_large
@@ -534,11 +552,15 @@ display:
         it.printf(130, 600, id(font_small_bold), colour_text, TextAlign::TOP_CENTER, "%s", id(collection_day).state.c_str());
         it.printf(130, 630, id(font_small_book), colour_text, TextAlign::TOP_CENTER, "%s", id(collection_date).state.c_str());
 
-        if (strlen(id(trains_next_fast_scheduled).state.c_str()) > 0 || strlen(id(trains_next_fast_scheduled).state.c_str()) > 0) {
+        if (strlen(id(trains_next_slow_scheduled).state.c_str()) > 0 || strlen(id(trains_next_slow_scheduled).state.c_str()) > 0) {
           it.printf(310, 500, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F052C");
-          it.printf(320, 500, id(font_med_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(trains_next_fast_expected).state.c_str());
-          if (id(trains_next_fast_expected).state != id(trains_next_fast_scheduled).state) {
-            it.printf(280, 540, id(font_small_book), colour_text, TextAlign::TOP_LEFT, "Scheduled %s", id(trains_next_fast_scheduled).state.c_str());
+          if (strlen(id(trains_next_fast_scheduled).state.c_str()) > 0 || strlen(id(trains_next_fast_scheduled).state.c_str()) > 0) {
+            it.printf(320, 500, id(font_med_bold), colour_text, TextAlign::TOP_LEFT, "%s", id(trains_next_fast_expected).state.c_str());
+            if (id(trains_next_fast_expected).state != id(trains_next_fast_scheduled).state) {
+              it.printf(280, 540, id(font_small_book), colour_text, TextAlign::TOP_LEFT, "Scheduled %s", id(trains_next_fast_scheduled).state.c_str());
+            }
+          } else {
+            it.printf(320, 500, id(font_med_bold), colour_text, TextAlign::TOP_LEFT, "None");
           }
 
           it.printf(310, 570, id(font_mdi_medium), colour_text, TextAlign::TOP_RIGHT, "\U000F1677");
