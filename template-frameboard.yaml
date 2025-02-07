@@ -90,7 +90,6 @@
     - name: Frameboard Data
       state: "OK"
       attributes:
-
         weather_condition_now: >
           {% set cond_now = states('weather.home') %}
           {% if states('sun.sun') == 'below_horizon' %}
@@ -250,7 +249,7 @@
           {% endif %}
         trains_next_fast_scheduled: >
           {% set walking_time_mins = 18 %}
-          {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') %}
+          {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') or [] %}
           {% set match = namespace(fast = None) %}
           {% for train in trains if not train.expected == 'Cancelled'%}
             {% set departure_time = as_timestamp(train.expected) %}
@@ -267,7 +266,7 @@
           {% endif %}
         trains_next_fast_expected: >
           {% set walking_time_mins = 18 %}
-          {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') %}
+          {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') or [] %}
           {% set match = namespace(fast = None) %}
           {% for train in trains if not train.expected == 'Cancelled'%}
             {% set departure_time = as_timestamp(train.expected) %}
@@ -284,7 +283,7 @@
           {% endif %}
         trains_next_slow_scheduled: >
           {% set walking_time_mins = 18 %}
-          {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') %}
+          {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') or [] %}
           {% set match = namespace(slow = None) %}
           {% for train in trains if not train.expected == 'Cancelled'%}
             {% set departure_time = as_timestamp(train.expected) %}
@@ -301,7 +300,7 @@
           {% endif %}
         trains_next_slow_expected: >
           {% set walking_time_mins = 18 %}
-          {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') %}
+          {% set trains = state_attr('sensor.train_schedule_sac_stp', 'trains') or [] %}
           {% set match = namespace(slow = None) %}
           {% for train in trains if not train.expected == 'Cancelled'%}
             {% set departure_time = as_timestamp(train.expected) %}
